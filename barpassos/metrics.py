@@ -39,13 +39,19 @@ def parse_time_minutes(start: str | None, end: str | None) -> int:
 
 def _study_points(minutes: int) -> int:
     if minutes >= 480:
-        return 18
+        return 36
     if minutes >= 360:
-        return 15
+        return 30
+    if minutes >= 240:
+        return 26
+    if minutes >= 200:
+        return 22
     if minutes >= 180:
-        return 9
+        return 18
+    if minutes >= 120:
+        return 12
     if minutes > 0:
-        return 4
+        return 5
     return 0
 
 

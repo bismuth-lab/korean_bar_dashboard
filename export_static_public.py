@@ -29,13 +29,15 @@ def _read_summary() -> dict[str, object]:
 def _score_class(score: int) -> str:
     if score <= 0:
         return "s0"
-    if score <= 30:
+    if score < 20:
         return "s1"
-    if score <= 60:
+    if score < 40:
         return "s2"
-    if score <= 80:
+    if score < 60:
         return "s3"
-    return "s4"
+    if score < 75:
+        return "s4"
+    return "s5"
 
 
 def _time_to_minutes(value: str | None) -> int | None:
@@ -190,7 +192,7 @@ def build_html(rows: list[dict[str, str]], summary: dict[str, object]) -> str:
     .value {{ font-size:26px; font-weight:800; margin-top:6px; }}
     .heatmap {{ display:grid; grid-template-rows:repeat(7, 13px); grid-auto-flow:column; gap:4px; overflow-x:auto; padding:14px; background:white; border:1px solid var(--line); border-radius:8px; }}
     .cell {{ width:13px; height:13px; border-radius:3px; background:#ebedf0; }}
-    .s1 {{ background:#c6e48b; }} .s2 {{ background:#7bc96f; }} .s3 {{ background:#239a3b; }} .s4 {{ background:#196127; }}
+    .s1 {{ background:#d8f3dc; }} .s2 {{ background:#95d5b2; }} .s3 {{ background:#52b788; }} .s4 {{ background:#2d6a4f; }} .s5 {{ background:#1b4332; }}
     .attendance-list {{ display:flex; flex-direction:column; gap:10px; margin: 8px 0 14px; padding:14px; background:white; border:1px solid var(--line); border-radius:8px; }}
     .attendance-row {{ display:grid; grid-template-columns:86px 54px minmax(130px,1fr) 54px 48px; gap:10px; align-items:center; font-size:14px; }}
     .attendance-date {{ font-weight:800; }}
