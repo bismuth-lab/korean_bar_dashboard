@@ -1354,6 +1354,78 @@ def page_review():
     st.download_button("Markdown 다운로드", report.encode("utf-8"), file_name=f"review_{week_start.isoformat()}.md")
 
 
+def page_daily_notes():
+    st.header("Daily Notes")
+    st.caption("오늘 기록에 남긴 메모를 날짜별로 모아봅니다. 공개 대시보드에는 이 메모가 나가지 않습니다.")
+    daily, _, _, day_scores = reload_data()
+    if daily.empty:
+        st.info("아직 오늘 기록 메모가 없습니다.")
+        return
+
+    notes = daily.copy()
+    notes["note"] = notes["note"].fillna("").astype(str)
+    notes["has_note"] = notes["note"].str.strip() != ""
+    notes = notes.merge(day_scores[["date", "day_score"]], on="date", how="left") if not day_scores.empty else notes
+    notes["month"] = notes["date"].apply(lambda d: d.strftime("%Y-%m"))
+
+    months = sorted(notes["month"].unique(), reverse=True)
+    c1, c2, c3 = st.columns([0.9, 1.2, 0.9])
+    with c1:
+        selected_month = st.selectbox("월", months)
+    with c2:
+        query = st.text_input("메모 검색", placeholder="예: 기말, 민법, 컨디션")
+    with c3:
+        only_notes = st.checkbox("메모 있는 날만", value=True)
+
+    view = notes[notes["month"] == selected_month].copy()
+    if only_notes:
+        view = view[view["has_note"]]
+    if query.strip():
+        view = view[view["note"].str.contains(query.strip(), case=False, na=False)]
+
+    st.subheader("월별 캘린더")
+    month_start = datetime.strptime(selected_month + "-01", "%Y-%m-%d").date()
+    next_month = (month_start.replace(day=28) + timedelta(days=4)).replace(day=1)
+    month_end = next_month - timedelta(days=1)
+    calendar_start = month_start - timedelta(days=month_start.weekday())
+    calendar_end = month_end + timedelta(days=6 - month_end.weekday())
+    by_date = {row["date"]: row for _, row in notes[notes["month"] == selected_month].iterrows()}
+
+    rows = []
+    cursor = calendar_start
+    while cursor <= calendar_end:
+        week = {}
+        for label in ["월", "화", "수", "목", "금", "토", "일"]:
+            item = by_date.get(cursor)
+            if cursor.month != month_start.month:
+                week[label] = ""
+            elif item is None:
+                week[label] = f"{cursor.day}"
+            else:
+                note = str(item.get("note") or "").strip()
+                score = item.get("day_score")
+                score_text = "" if pd.isna(score) else f" · {int(score)}점"
+                snippet = note[:28] + ("..." if len(note) > 28 else "")
+                week[label] = f"{cursor.day}{score_text}" + (f"\n{snippet}" if snippet else "")
+            cursor += timedelta(days=1)
+        rows.append(week)
+    st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+
+    st.subheader("메모 리스트")
+    if view.empty:
+        st.info("조건에 맞는 메모가 없습니다.")
+    else:
+        show = view.sort_values("date", ascending=False).copy()
+        show["날짜"] = show["date"].apply(lambda d: d.isoformat())
+        show["점수"] = show["day_score"].fillna(0).astype(int) if "day_score" in show.columns else 0
+        show["앉음"] = show["checkin"].fillna("")
+        show["떠남"] = show["checkout"].fillna("")
+        show["메모"] = show["note"]
+        st.dataframe(show[["날짜", "점수", "앉음", "떠남", "메모"]], hide_index=True, use_container_width=True)
+        markdown = "\n\n".join([f"## {row['날짜']}\n{row['메모']}" for _, row in show.iterrows()])
+        st.download_button("메모 Markdown 다운로드", markdown.encode("utf-8"), file_name=f"daily_notes_{selected_month}.md")
+
+
 def page_settings():
     st.header("설정 / 백업")
     show_flash_success()
@@ -1454,6 +1526,7 @@ PAGES = {
     "Mocks/Bayes": page_mocks,
     "Coach Checks": page_checks,
     "Weekly Review": page_review,
+    "Daily Notes": page_daily_notes,
     "Settings": page_settings,
 }
 
