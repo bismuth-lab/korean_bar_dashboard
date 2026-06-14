@@ -810,27 +810,7 @@ def page_dashboard():
         st.info("모의고사 또는 루틴 기록이 쌓이면 업데이트가 표시됩니다.")
 
 
-def page_public_dashboard():
-    st.header("Public Dashboard")
-    st.caption("정확한 장소와 답안 내용은 비공개이며, 매일의 루틴과 출력량만 기록합니다.")
-    st.caption("正確な場所と答案の内容は非公開にし、毎日のルーティンとアウトプット量だけを記録します。")
-    st.markdown(
-        """
-        <div class='warning-card'>
-          <strong>공개 목적 / 公開の目的</strong><br>
-          누군가에게 감시받기보다, 도망치면 빈칸이 남는 구조를 만들기 위한 로그입니다.<br>
-          <span class='small-muted'>誰かに監視されるためではなく、逃げた日には空白が残る仕組みを作るためのログです。</span>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    daily, outputs, _, day_scores = reload_data()
-    delay_hours = int(settings.get("public_delay_hours", "24"))
-    include_hash = settings.get("public_include_evidence_hash", "false").lower() == "true"
-    public_df = public_log_frame(daily, outputs, day_scores, delay_hours, include_hash)
-    summary = public_summary(public_df, build_milestones(), outputs)
-    export_public_files(public_df, summary)
-
+def render_public_dashboard(public_df: pd.DataFrame, summary: dict[str, object], delay_hours: int, empty_message: str) -> None:
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         metric_card("오늘의 상태 / 今日の状態", str(summary["today_status"]), f"{summary.get('today_status_ja', '')} · 공개 지연 {delay_hours}시간")
@@ -843,7 +823,7 @@ def page_public_dashboard():
 
     st.subheader("GitHub식 공개 히트맵")
     if public_df.empty:
-        st.info("공개 가능한 기록이 아직 없습니다. 24시간 지연 공개 옵션이 켜져 있으면 오늘 기록은 내일 공개됩니다.")
+        st.info(empty_message)
     else:
         public_scores = public_df[["date", "score"]].copy()
         public_scores["date"] = pd.to_datetime(public_scores["date"]).dt.date
@@ -893,9 +873,52 @@ def page_public_dashboard():
         ja = risk_ja[idx] if isinstance(risk_ja, list) and idx < len(risk_ja) else ""
         st.markdown(f"<div class='warning-card'>{risk}<br><span class='small-muted'>{ja}</span></div>", unsafe_allow_html=True)
 
+
+def page_public_dashboard():
+    st.header("Public Dashboard")
+    st.caption("정확한 장소와 답안 내용은 비공개이며, 매일의 루틴과 출력량만 기록합니다.")
+    st.caption("正確な場所と答案の内容は非公開にし、毎日のルーティンとアウトプット量だけを記録します。")
+    st.markdown(
+        """
+        <div class='warning-card'>
+          <strong>공개 목적 / 公開の目的</strong><br>
+          누군가에게 감시받기보다, 도망치면 빈칸이 남는 구조를 만들기 위한 로그입니다.<br>
+          <span class='small-muted'>誰かに監視されるためではなく、逃げた日には空白が残る仕組みを作るためのログです。</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    daily, outputs, _, day_scores = reload_data()
+    delay_hours = int(settings.get("public_delay_hours", "24"))
+    include_hash = settings.get("public_include_evidence_hash", "false").lower() == "true"
+    public_df = public_log_frame(daily, outputs, day_scores, delay_hours, include_hash)
+    summary = public_summary(public_df, build_milestones(), outputs)
+    export_public_files(public_df, summary)
+    render_public_dashboard(
+        public_df,
+        summary,
+        delay_hours,
+        "공개 가능한 기록이 아직 없습니다. 24시간 지연 공개 옵션이 켜져 있으면 오늘 기록은 내일 공개됩니다.",
+    )
+
     st.subheader("공개 파일")
     st.code("public/public_log.csv\npublic/public_summary.json", language="text")
     st.caption("Public Dashboard를 열 때마다 공개용 CSV/JSON이 갱신됩니다.")
+
+
+def page_public_preview():
+    st.header("Public Preview")
+    st.caption("지금 입력된 데이터가 공개 대시보드에 어떻게 보일지 지연 없이 미리 봅니다. 이 화면은 공개 파일을 갱신하지 않습니다.")
+    daily, outputs, _, day_scores = reload_data()
+    include_hash = settings.get("public_include_evidence_hash", "false").lower() == "true"
+    public_df = public_log_frame(daily, outputs, day_scores, 0, include_hash)
+    summary = public_summary(public_df, build_milestones(), outputs)
+    render_public_dashboard(
+        public_df,
+        summary,
+        0,
+        "아직 미리보기할 기록이 없습니다. 오늘 기록을 저장하면 이 화면에 바로 반영됩니다.",
+    )
 
 
 def _daily_form(existing_row: dict, form_key: str = "daily_form", compact: bool = False):
@@ -1404,6 +1427,7 @@ chmod +x publish_public.sh install_launchd_publish.sh
 PAGES = {
     "Dashboard": page_dashboard,
     "Public Dashboard": page_public_dashboard,
+    "Public Preview": page_public_preview,
     "Today": page_today,
     "Quick Input": page_quick,
     "Outputs": page_outputs,
