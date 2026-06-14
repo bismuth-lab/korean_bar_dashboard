@@ -1372,7 +1372,7 @@ chmod +x publish_public.sh install_launchd_publish.sh
 ./install_launchd_publish.sh""",
         language="bash",
     )
-    st.caption("GitHub Pages는 저장소 Settings > Pages에서 `main` 브랜치의 `/public` 폴더를 배포 대상으로 선택하세요.")
+    st.caption("GitHub Pages는 저장소 Settings > Pages에서 `main` 브랜치의 `/docs` 폴더를 배포 대상으로 선택하세요. `public/`은 생성 원본이고, publish 스크립트가 `docs/`로 복사합니다.")
 
 
 PAGES = {

@@ -85,7 +85,7 @@ Public Dashboard 페이지를 열면 공개용 요약 파일이 자동 생성됩
 .\.venv\Scripts\python.exe export_static_public.py
 ```
 
-생성되는 파일은 `public/index.html`입니다. GitHub Pages에서 `public` 폴더를 배포 대상으로 잡으면 공개용 요약 대시보드만 노출할 수 있습니다.
+생성되는 원본 파일은 `public/index.html`입니다. GitHub Pages의 branch 배포 화면은 보통 `/public`을 직접 선택할 수 없으므로, publish 스크립트가 같은 파일을 `docs/`에도 복사합니다. GitHub Pages에서는 `docs` 폴더를 배포 대상으로 선택하세요.
 
 공개 파일 생성부터 GitHub push까지 한 번에 하려면 아래 스크립트를 사용합니다.
 
@@ -124,6 +124,6 @@ git remote add origin https://github.com/YOUR_ID/YOUR_REPO.git
 git push -u origin main
 ```
 
-GitHub Pages는 저장소 `Settings > Pages`에서 `main` 브랜치의 `/public` 폴더를 배포 대상으로 선택하세요. 앱 설정의 `공개 지연 시간` 기본값이 24시간이라 오늘 기록은 다음날 공개 파일에 반영됩니다.
+GitHub Pages는 저장소 `Settings > Pages`에서 `main` 브랜치의 `/docs` 폴더를 배포 대상으로 선택하세요. 앱 설정의 `공개 지연 시간` 기본값이 24시간이라 오늘 기록은 다음날 공개 파일에 반영됩니다.
 
 GitHub에는 `public/`만 공개 repo 또는 Pages 배포 브랜치에 올리는 것을 권장합니다. `barpass_os.db`, `evidence/`, `.venv/`는 공개 repo에 올리지 마세요.

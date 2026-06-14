@@ -16,7 +16,10 @@ fi
 "$PYTHON" export_public.py
 "$PYTHON" export_static_public.py
 
-git add public/public_log.csv public/public_summary.json public/index.html
+mkdir -p docs
+cp public/public_log.csv public/public_summary.json public/index.html docs/
+
+git add public/public_log.csv public/public_summary.json public/index.html docs/public_log.csv docs/public_summary.json docs/index.html
 
 if git diff --cached --quiet; then
   echo "No public dashboard changes to publish."
