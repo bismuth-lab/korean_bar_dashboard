@@ -97,9 +97,16 @@ def compute_day_scores(daily: pd.DataFrame, outputs: pd.DataFrame) -> pd.DataFra
         lecture_min = int(row.get("lecture_min") or 0)
         self_study_min = int(row.get("self_study_min") or 0)
         cbt_practice_min = int(row.get("cbt_practice_min") or 0)
+        study_blocks = int(row.get("study_blocks") or 0)
+        block_estimated_min = study_blocks * 25
 
-        # 사용자가 자습시간을 입력하지 않은 예전 기록은 체류시간을 완만하게 대체값으로 사용한다.
-        effective_study_min = self_study_min if self_study_min > 0 else attendance_min
+        # 집중블록은 자습시간과 같은 행동이므로, 자습시간이 비어 있을 때만 시간 대체값으로 쓴다.
+        if self_study_min > 0:
+            effective_study_min = self_study_min
+        elif block_estimated_min > 0:
+            effective_study_min = block_estimated_min
+        else:
+            effective_study_min = attendance_min
 
         output_points = 0
         heavy_count = 0
@@ -121,7 +128,7 @@ def compute_day_scores(daily: pd.DataFrame, outputs: pd.DataFrame) -> pd.DataFra
             output_points += min(20, attempted // 10)
 
         first_task_points = 8 if int(row.get("completed_first") or 0) else 0
-        block_points = min(10, int(row.get("study_blocks") or 0) * 2)
+        block_points = 0
         exercise_points = 4 if int(row.get("exercise_min") or 0) >= 15 else 0
         cbt_points = 4 if cbt_practice_min >= 30 else 0
         avoidance = row.get("avoidance") or []
