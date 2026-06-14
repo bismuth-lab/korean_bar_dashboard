@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-06-14T16:04:58",
+  "today_status": "기록 대기",
+  "today_status_ja": "記録待ち",
+  "streak_days": 0,
+  "weekly_score": 0,
+  "next_milestone": "7월 학교/학원 모의고사",
+  "next_milestone_ja": "7月 学内・予備校模試",
+  "next_milestone_d_day": "D-396",
+  "risk_signals": [
+    "공개 가능한 기록이 아직 없습니다."
+  ],
+  "risk_signals_ja": [
+    "公開できる記録はまだありません。"
+  ],
+  "notice": "정확한 장소와 답안 내용은 비공개이며, 매일의 루틴과 출력량만 기록합니다.",
+  "notice_ja": "正確な場所と答案の内容は非公開にし、毎日のルーティンとアウトプット量だけを記録します。"
+}

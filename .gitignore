@@ -1,0 +1,9 @@
+.venv/
+.venv-macos/
+__pycache__/
+*.pyc
+barpass_os.db
+/evidence/*
+!.gitkeep
+.DS_Store
+public_publish*.log
