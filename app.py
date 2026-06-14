@@ -389,6 +389,16 @@ def _fmt_hours(minutes: int | float) -> str:
     return f"{minutes // 60}h {minutes % 60:02d}m"
 
 
+def _num(value, default: float = 0.0) -> float:
+    if value is None or pd.isna(value):
+        return default
+    return float(value)
+
+
+def _int_num(value, default: int = 0) -> int:
+    return int(_num(value, float(default)))
+
+
 def _time_to_minutes(value: str | None) -> int | None:
     if not value:
         return None
@@ -548,14 +558,14 @@ def public_log_frame(
             "date": row["date"].isoformat(),
             "checkin": row.get("checkin") or "",
             "checkout": row.get("checkout") or "",
-            "seat_hours": round(float(row.get("attendance_min") or 0) / 60, 2),
-            "self_study_hours": round(float(row.get("effective_study_min") or 0) / 60, 2),
-            "lecture_hours": round(float(row.get("lecture_min") or 0) / 60, 2),
-            "cbt_hours": round(float(row.get("cbt_practice_min") or 0) / 60, 2),
-            "outputs_count": int(row.get("outputs_count") or 0),
-            "mcq_count": int(row.get("mcq_attempted") or 0),
+            "seat_hours": round(_num(row.get("attendance_min")) / 60, 2),
+            "self_study_hours": round(_num(row.get("effective_study_min")) / 60, 2),
+            "lecture_hours": round(_num(row.get("lecture_min")) / 60, 2),
+            "cbt_hours": round(_num(row.get("cbt_practice_min")) / 60, 2),
+            "outputs_count": _int_num(row.get("outputs_count")),
+            "mcq_count": _int_num(row.get("mcq_attempted")),
             "first_task_done": bool(row.get("completed_first")),
-            "score": int(row.get("day_score") or 0),
+            "score": _int_num(row.get("day_score")),
             "edited": bool(row.get("edited") or 0),
             "late_entry": bool(row.get("late_entry") or 0),
         }
