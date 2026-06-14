@@ -409,6 +409,16 @@ def _duration_minutes(checkin: str | None, checkout: str | None) -> int:
     return max(0, end - start)
 
 
+def flash_success(message: str) -> None:
+    st.session_state["flash_success"] = f"{message} · {datetime.now().strftime('%H:%M:%S')}"
+
+
+def show_flash_success() -> None:
+    message = st.session_state.pop("flash_success", "")
+    if message:
+        st.success(message)
+
+
 def attendance_bars_html(rows: pd.DataFrame) -> str:
     if rows.empty:
         return ""
@@ -954,7 +964,7 @@ def _daily_form(existing_row: dict, form_key: str = "daily_form", compact: bool 
                     "note": note,
                 }
             )
-            st.success("저장했습니다.")
+            flash_success("오늘 기록을 저장했습니다")
             st.rerun()
 
 
@@ -1022,12 +1032,13 @@ def _output_form(form_key: str = "output_form", compact: bool = False):
                     "note": out_note,
                 }
             )
-            st.success("출력을 추가했습니다.")
+            flash_success("출력을 추가했습니다")
             st.rerun()
 
 
 def page_today():
     st.header("오늘 기록")
+    show_flash_success()
     daily, _, _, _ = reload_data()
     today = date.today()
     existing = daily[daily["date"] == today] if not daily.empty else pd.DataFrame()
@@ -1038,12 +1049,12 @@ def page_today():
     with b1:
         if st.button("지금 앉음", use_container_width=True):
             _stamp_today(row, "checkin")
-            st.success("앉은 시간을 저장했습니다.")
+            flash_success("앉은 시간을 저장했습니다")
             st.rerun()
     with b2:
         if st.button("지금 떠남", use_container_width=True):
             _stamp_today(row, "checkout")
-            st.success("떠난 시간을 저장했습니다.")
+            flash_success("떠난 시간을 저장했습니다")
             st.rerun()
     with b3:
         if row.get("checkin") or row.get("checkout"):
@@ -1058,6 +1069,7 @@ def page_today():
 
 def page_quick():
     st.header("60초 빠른 입력")
+    show_flash_success()
     st.caption("모바일이나 피곤한 날에는 여기만 써도 됩니다. 완벽한 기록보다 끊기지 않는 기록이 우선입니다.")
     daily, _, _, _ = reload_data()
     today = date.today()
@@ -1120,6 +1132,7 @@ def page_outputs():
 
 def page_mocks():
     st.header("모의고사 & 베이지안 업데이트")
+    show_flash_success()
     st.markdown(
         """
         2027년 모의고사는 7월 진단전과 10월 실전예측전으로 나눠 봅니다.
@@ -1169,7 +1182,7 @@ def page_mocks():
                     "note": note,
                 }
             )
-            st.success("모의고사를 저장했습니다.")
+            flash_success("모의고사를 저장했습니다")
             st.rerun()
 
     daily, outputs, mocks, day_scores = reload_data()
@@ -1300,6 +1313,7 @@ def page_review():
 
 def page_settings():
     st.header("설정 / 백업")
+    show_flash_success()
     with st.form("settings"):
         exam_date = st.date_input("시험일", value=datetime.strptime(settings.get("exam_date", "2028-01-11"), "%Y-%m-%d").date())
         mock_july_date = st.date_input("7월 학교/학원 모의고사", value=_setting_date("mock_july_date", "2027-07-15"))
@@ -1353,7 +1367,7 @@ def page_settings():
             set_setting("weekly_cbt_goal", weekly_cbt_goal)
             set_setting("public_delay_hours", public_delay_hours)
             set_setting("public_include_evidence_hash", str(public_include_evidence_hash).lower())
-            st.success("설정을 저장했습니다.")
+            flash_success("설정을 저장했습니다")
             st.rerun()
 
     st.subheader("CSV 백업")
