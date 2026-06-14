@@ -441,11 +441,11 @@ def attendance_bars_html(rows: pd.DataFrame) -> str:
     if rows.empty:
         return ""
     day_start = 6 * 60
-    day_span = 20 * 60
+    day_span = 24 * 60
     axis = (
         "<div class='attendance-axis'>"
         "<div></div><div></div>"
-        "<div class='attendance-ticks'><span>06</span><span>12</span><span>18</span><span>24</span><span>02</span></div>"
+        "<div class='attendance-ticks'><span>06</span><span>12</span><span>18</span><span>24</span><span>06</span></div>"
         "<div></div><div></div>"
         "</div>"
     )
