@@ -258,6 +258,20 @@ def build_milestones() -> list[dict[str, str | date]]:
         },
         {
             "kind": "운영",
+            "name": "현재 기말고사 시작",
+            "role": "진행 중인 학교시험",
+            "date": _setting_date("current_final_start", "2026-06-10"),
+            "goal": "내신 우선, 변시 루틴은 최소 출력으로 끊기지 않게 유지",
+        },
+        {
+            "kind": "운영",
+            "name": "현재 기말고사 종료",
+            "role": "방학 루틴 전환",
+            "date": _setting_date("current_final_end", "2026-06-21"),
+            "goal": "시험 후 48시간 안에 오답/약점 목록으로 전환",
+        },
+        {
+            "kind": "운영",
             "name": "여름방학 종료",
             "role": "방학 퀘스트 마감",
             "date": _setting_date("summer_break_end", "2026-08-31"),
@@ -304,6 +318,41 @@ def build_milestones() -> list[dict[str, str | date]]:
             "role": "전범위 집중모드",
             "date": _setting_date("winter_break_start", "2026-12-21"),
             "goal": "전범위 회독과 출력량 재상승",
+        },
+        {
+            "kind": "운영",
+            "name": "2027년 1학기 개강",
+            "role": "수업+변시 출력 병행",
+            "date": _setting_date("spring_2027_start", "2027-03-02"),
+            "goal": "학기 첫 2주에 최소 루틴 고정",
+        },
+        {
+            "kind": "운영",
+            "name": "2027년 1학기 중간고사 시작",
+            "role": "내신-변시 병행 압박 구간",
+            "date": _setting_date("spring_2027_midterm_start", "2027-04-20"),
+            "goal": "학교시험 대비 중에도 선택형/오답 루틴 0 방지",
+        },
+        {
+            "kind": "운영",
+            "name": "2027년 1학기 중간고사 종료",
+            "role": "모의고사 전 회복 구간",
+            "date": _setting_date("spring_2027_midterm_end", "2027-05-01"),
+            "goal": "밀린 사례 목차와 반복오답을 1주 안에 복구",
+        },
+        {
+            "kind": "운영",
+            "name": "2027년 1학기 기말고사 시작",
+            "role": "7월 모의고사 직전 압박 구간",
+            "date": _setting_date("spring_2027_final_start", "2027-06-08"),
+            "goal": "내신 마무리와 7월 진단전 준비를 분리해서 관리",
+        },
+        {
+            "kind": "운영",
+            "name": "2027년 1학기 기말고사 종료",
+            "role": "7월 진단전 전환",
+            "date": _setting_date("spring_2027_final_end", "2027-06-19"),
+            "goal": "72시간 안에 약점 3개와 7월 모의고사 체크리스트 확정",
         },
     ]
 
@@ -1243,6 +1292,8 @@ def page_settings():
         exam_date = st.date_input("시험일", value=datetime.strptime(settings.get("exam_date", "2028-01-11"), "%Y-%m-%d").date())
         mock_july_date = st.date_input("7월 학교/학원 모의고사", value=_setting_date("mock_july_date", "2027-07-15"))
         mock_october_date = st.date_input("10월 법전협/실전 모의고사", value=_setting_date("mock_october_date", "2027-10-15"))
+        current_final_start = st.date_input("현재 기말고사 시작", value=_setting_date("current_final_start", "2026-06-10"))
+        current_final_end = st.date_input("현재 기말고사 종료", value=_setting_date("current_final_end", "2026-06-21"))
         summer_break_end = st.date_input("여름방학 종료", value=_setting_date("summer_break_end", "2026-08-31"))
         fall_semester_start = st.date_input("2학기 개강", value=_setting_date("fall_semester_start", "2026-09-01"))
         midterm_start = st.date_input("중간고사 시작", value=_setting_date("midterm_start", "2026-10-19"))
@@ -1250,6 +1301,11 @@ def page_settings():
         final_start = st.date_input("기말고사 시작", value=_setting_date("final_start", "2026-12-07"))
         fall_semester_end = st.date_input("2학기 종강", value=_setting_date("fall_semester_end", "2026-12-18"))
         winter_break_start = st.date_input("겨울방학 시작", value=_setting_date("winter_break_start", "2026-12-21"))
+        spring_2027_start = st.date_input("2027년 1학기 개강", value=_setting_date("spring_2027_start", "2027-03-02"))
+        spring_2027_midterm_start = st.date_input("2027년 1학기 중간고사 시작", value=_setting_date("spring_2027_midterm_start", "2027-04-20"))
+        spring_2027_midterm_end = st.date_input("2027년 1학기 중간고사 종료", value=_setting_date("spring_2027_midterm_end", "2027-05-01"))
+        spring_2027_final_start = st.date_input("2027년 1학기 기말고사 시작", value=_setting_date("spring_2027_final_start", "2027-06-08"))
+        spring_2027_final_end = st.date_input("2027년 1학기 기말고사 종료", value=_setting_date("spring_2027_final_end", "2027-06-19"))
         prior = st.slider("초기 합격가능성 prior", 0.05, 0.95, float(settings.get("prior_probability", "0.70")), 0.01)
         daily_min = st.number_input("최소 루틴 점수", min_value=0, max_value=100, value=int(settings.get("daily_min_score", "35")))
         daily_target = st.number_input("목표 루틴 점수", min_value=0, max_value=100, value=int(settings.get("daily_target_score", "70")))
@@ -1263,6 +1319,8 @@ def page_settings():
             set_setting("exam_date", exam_date.isoformat())
             set_setting("mock_july_date", mock_july_date.isoformat())
             set_setting("mock_october_date", mock_october_date.isoformat())
+            set_setting("current_final_start", current_final_start.isoformat())
+            set_setting("current_final_end", current_final_end.isoformat())
             set_setting("summer_break_end", summer_break_end.isoformat())
             set_setting("fall_semester_start", fall_semester_start.isoformat())
             set_setting("midterm_start", midterm_start.isoformat())
@@ -1270,6 +1328,11 @@ def page_settings():
             set_setting("final_start", final_start.isoformat())
             set_setting("fall_semester_end", fall_semester_end.isoformat())
             set_setting("winter_break_start", winter_break_start.isoformat())
+            set_setting("spring_2027_start", spring_2027_start.isoformat())
+            set_setting("spring_2027_midterm_start", spring_2027_midterm_start.isoformat())
+            set_setting("spring_2027_midterm_end", spring_2027_midterm_end.isoformat())
+            set_setting("spring_2027_final_start", spring_2027_final_start.isoformat())
+            set_setting("spring_2027_final_end", spring_2027_final_end.isoformat())
             set_setting("prior_probability", prior)
             set_setting("daily_min_score", daily_min)
             set_setting("daily_target_score", daily_target)
