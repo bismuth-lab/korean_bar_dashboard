@@ -94,6 +94,11 @@ CUSTOM_CSS = """
 .progress-rail {height: 8px; background: #eef2f7; border-radius: 999px; overflow:hidden; margin-top: 10px;}
 .progress-fill {height: 8px; background: #2563eb; border-radius: 999px;}
 .attendance-list {display:flex; flex-direction:column; gap:10px; margin: 8px 0 18px;}
+.attendance-axis {
+  display:grid; grid-template-columns: 86px 54px minmax(130px, 1fr) 54px 48px;
+  gap:10px; align-items:center; font-size:0.75rem; color:#667085;
+}
+.attendance-ticks {display:flex; justify-content:space-between; font-variant-numeric:tabular-nums;}
 .attendance-row {
   display:grid; grid-template-columns: 86px 54px minmax(130px, 1fr) 54px 48px;
   gap:10px; align-items:center; font-size:0.9rem;
@@ -407,8 +412,15 @@ def _duration_minutes(checkin: str | None, checkout: str | None) -> int:
 def attendance_bars_html(rows: pd.DataFrame) -> str:
     if rows.empty:
         return ""
-    day_start = 5 * 60
-    day_span = 19 * 60
+    day_start = 7 * 60
+    day_span = 17 * 60
+    axis = (
+        "<div class='attendance-axis'>"
+        "<div></div><div></div>"
+        "<div class='attendance-ticks'><span>07</span><span>12</span><span>18</span><span>24</span></div>"
+        "<div></div><div></div>"
+        "</div>"
+    )
     items = []
     for _, row in rows.iterrows():
         checkin = str(row.get("checkin") or "")
@@ -439,7 +451,7 @@ def attendance_bars_html(rows: pd.DataFrame) -> str:
             f"<div class='attendance-hours'>{hours}</div>"
             "</div>"
         )
-    return "<div class='attendance-list'>" + "".join(items) + "</div>"
+    return "<div class='attendance-list'>" + axis + "".join(items) + "</div>"
 
 
 def _daily_record_from_row(row: dict, stamped: dict[str, str]) -> dict:

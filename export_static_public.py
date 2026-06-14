@@ -107,8 +107,15 @@ def _recent_table(rows: list[dict[str, str]]) -> str:
 
 def _recent_attendance(rows: list[dict[str, str]]) -> str:
     recent = rows[-7:]
-    day_start = 5 * 60
-    day_span = 19 * 60
+    day_start = 7 * 60
+    day_span = 17 * 60
+    axis = (
+        "<div class='attendance-axis'>"
+        "<div></div><div></div>"
+        "<div class='attendance-ticks'><span>07</span><span>12</span><span>18</span><span>24</span></div>"
+        "<div></div><div></div>"
+        "</div>"
+    )
     body = []
     for row in recent:
         checkin = row.get("checkin") or ""
@@ -139,7 +146,7 @@ def _recent_attendance(rows: list[dict[str, str]]) -> str:
             f"<div class='attendance-hours'>{hours}</div>"
             "</div>"
         )
-    return "<div class='attendance-list'>" + "".join(body) + "</div>"
+    return "<div class='attendance-list'>" + axis + "".join(body) + "</div>"
 
 
 def _risk_list(summary: dict[str, object]) -> str:
@@ -194,13 +201,15 @@ def build_html(rows: list[dict[str, str]], summary: dict[str, object]) -> str:
     .cell {{ width:13px; height:13px; border-radius:3px; background:#ebedf0; }}
     .s1 {{ background:#d8f3dc; }} .s2 {{ background:#95d5b2; }} .s3 {{ background:#52b788; }} .s4 {{ background:#2d6a4f; }} .s5 {{ background:#1b4332; }}
     .attendance-list {{ display:flex; flex-direction:column; gap:10px; margin: 8px 0 14px; padding:14px; background:white; border:1px solid var(--line); border-radius:8px; }}
+    .attendance-axis {{ display:grid; grid-template-columns:86px 54px minmax(130px,1fr) 54px 48px; gap:10px; align-items:center; font-size:12px; color:#667085; }}
+    .attendance-ticks {{ display:flex; justify-content:space-between; font-variant-numeric:tabular-nums; }}
     .attendance-row {{ display:grid; grid-template-columns:86px 54px minmax(130px,1fr) 54px 48px; gap:10px; align-items:center; font-size:14px; }}
     .attendance-date {{ font-weight:800; }}
     .attendance-time {{ color:#475467; font-variant-numeric:tabular-nums; }}
     .attendance-rail {{ height:14px; border-radius:999px; background:#f1f5f9; position:relative; overflow:hidden; border:1px solid #e2e8f0; }}
     .attendance-fill {{ position:absolute; top:0; bottom:0; border-radius:999px; background:#ef4444; }}
     .attendance-hours {{ text-align:right; font-weight:800; color:#991b1b; font-variant-numeric:tabular-nums; }}
-    @media (max-width: 640px) {{ .attendance-row {{ grid-template-columns:70px 48px minmax(80px,1fr) 48px; }} .attendance-hours {{ display:none; }} }}
+    @media (max-width: 640px) {{ .attendance-row,.attendance-axis {{ grid-template-columns:70px 48px minmax(80px,1fr) 48px; }} .attendance-hours {{ display:none; }} }}
     .risks {{ background:white; border:1px solid var(--line); border-radius:8px; padding:16px 28px; }}
     .risks li {{ margin:8px 0; }}
     .risks span {{ display:block; color:var(--muted); font-size:14px; margin-top:3px; }}
