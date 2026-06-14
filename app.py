@@ -419,6 +419,14 @@ def _duration_minutes(checkin: str | None, checkout: str | None) -> int:
     return max(0, end - start)
 
 
+def _timeline_minute(value: int | None, day_start: int) -> int | None:
+    if value is None:
+        return None
+    if value < day_start:
+        return value + 24 * 60
+    return value
+
+
 def flash_success(message: str) -> None:
     st.session_state["flash_success"] = f"{message} · {datetime.now().strftime('%H:%M:%S')}"
 
@@ -432,12 +440,12 @@ def show_flash_success() -> None:
 def attendance_bars_html(rows: pd.DataFrame) -> str:
     if rows.empty:
         return ""
-    day_start = 7 * 60
-    day_span = 17 * 60
+    day_start = 6 * 60
+    day_span = 20 * 60
     axis = (
         "<div class='attendance-axis'>"
         "<div></div><div></div>"
-        "<div class='attendance-ticks'><span>07</span><span>12</span><span>18</span><span>24</span></div>"
+        "<div class='attendance-ticks'><span>06</span><span>12</span><span>18</span><span>24</span><span>02</span></div>"
         "<div></div><div></div>"
         "</div>"
     )
@@ -452,7 +460,9 @@ def attendance_bars_html(rows: pd.DataFrame) -> str:
             fill = "<div class='attendance-rail'></div>"
             hours = "-"
         else:
-            if end < start:
+            start = _timeline_minute(start, day_start)
+            end = _timeline_minute(end, day_start)
+            if start is not None and end is not None and end < start:
                 end += 24 * 60
             left = max(0, min(100, (start - day_start) / day_span * 100))
             right = max(left, min(100, (end - day_start) / day_span * 100))
