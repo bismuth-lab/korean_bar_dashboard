@@ -7,8 +7,10 @@
   <string>com.nohjunho.barpass-public-publish</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/bin/bash</string>
-    <string>/Users/nohjunho/Library/CloudStorage/OneDrive-개인/Project/barpass_os_streamlit_v2_8502/publish_public.sh</string>
+    <string>/usr/bin/open</string>
+    <string>-a</string>
+    <string>Terminal</string>
+    <string>/Users/nohjunho/.local/bin/barpass_public_publish_terminal.command</string>
   </array>
   <key>StartCalendarInterval</key>
   <dict>
@@ -18,9 +20,9 @@
     <integer>10</integer>
   </dict>
   <key>StandardOutPath</key>
-  <string>/Users/nohjunho/Library/CloudStorage/OneDrive-개인/Project/barpass_os_streamlit_v2_8502/public_publish.log</string>
+  <string>/Users/nohjunho/Library/Logs/barpass/public_publish.log</string>
   <key>StandardErrorPath</key>
-  <string>/Users/nohjunho/Library/CloudStorage/OneDrive-개인/Project/barpass_os_streamlit_v2_8502/public_publish.err.log</string>
+  <string>/Users/nohjunho/Library/Logs/barpass/public_publish.err.log</string>
   <key>RunAtLoad</key>
   <false/>
 </dict>
