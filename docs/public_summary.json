@@ -1,26 +1,26 @@
 {
-  "generated_at": "2026-06-16T07:10:02",
+  "generated_at": "2026-06-17T07:10:03",
   "next_milestone": "7월 학교/학원 모의고사",
   "next_milestone_ja": "7月 学内・予備校模試",
-  "next_milestone_d_day": "D-394",
+  "next_milestone_d_day": "D-393",
   "notice": "정확한 장소와 답안 내용은 비공개이며, 매일의 루틴과 출력량만 기록합니다.",
   "notice_ja": "正確な場所と答案の内容は非公開にし、毎日のルーティンとアウトプット量だけを記録します。",
-  "today_status": "기록 대기",
-  "today_status_ja": "記録待ち",
-  "latest_date": "2026-06-15",
-  "streak_days": 0,
-  "weekly_score": 0,
-  "weekly_seat_hours": 0.0,
-  "weekly_self_study_hours": 0.0,
+  "today_status": "기록 완료",
+  "today_status_ja": "記録完了",
+  "latest_date": "2026-06-16",
+  "streak_days": 1,
+  "weekly_score": 42,
+  "weekly_seat_hours": 10.9,
+  "weekly_self_study_hours": 10.9,
   "weekly_outputs": 0,
   "weekly_mcq": 0,
-  "zero_output_days_7d": 2,
+  "zero_output_days_7d": 3,
   "risk_signals": [
-    "최근 7일 중 출력 없는 날: 2일",
+    "최근 7일 중 출력 없는 날: 3일",
     "출력 공백 주의: 강의/정리보다 사례·기록·오답 산출물을 먼저 배치하세요."
   ],
   "risk_signals_ja": [
-    "直近7日間でアウトプットがない日: 2日",
+    "直近7日間でアウトプットがない日: 3日",
     "アウトプット空白に注意: 講義や整理より、答案・記録・復習の成果物を先に置きましょう。"
   ]
 }
